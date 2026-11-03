@@ -6,7 +6,28 @@ CSS = r'''
 /* Force a consistent light interface even when browser or OS prefers dark mode. */
 :root { color-scheme: light; --blast-ink:#172539; --blast-muted:#506379; --blast-teal:#176b6a; --blast-paper:#f6f8fc; }
 html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {background-color:var(--blast-paper) !important; color:var(--blast-ink) !important; font-family:'DM Sans',sans-serif !important;}
-.stApp, .stApp * {font-family:'DM Sans',sans-serif;}
+/* Important: do not override every descendant's font-family. Streamlit icons
+   use ligature icon fonts and otherwise display names like 'keyboard_double_arrow'. */
+.stApp p, .stApp li, .stApp label, .stApp input, .stApp textarea,
+.stApp button, .stApp [data-testid="stMarkdownContainer"] {
+    font-family:'DM Sans',sans-serif;
+}
+/* Preserve Streamlit's Material Symbols font for chevrons, expanders and controls. */
+.stApp [data-testid="stIconMaterial"],
+.stApp .material-symbols-rounded,
+.stApp .material-symbols-outlined,
+.stApp .material-icons {
+    font-family:'Material Symbols Rounded' !important;
+    font-weight:normal !important;
+    font-style:normal !important;
+    font-size:24px !important;
+    line-height:1 !important;
+    letter-spacing:normal !important;
+    text-transform:none !important;
+    white-space:nowrap !important;
+    font-feature-settings:'liga' !important;
+    -webkit-font-feature-settings:'liga' 1 !important;
+}
 h1,h2,h3,h4,h5,h6 {font-family:'Space Grotesk',sans-serif !important;letter-spacing:-.025em; color:var(--blast-ink) !important;}
 [data-testid="stMarkdownContainer"], [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] li, [data-testid="stMarkdownContainer"] strong, [data-testid="stMarkdownContainer"] label, [data-testid="stCaptionContainer"], [data-testid="stWidgetLabel"] {color:var(--blast-ink) !important;}
 [data-testid="stCaptionContainer"], .smallprint, [data-testid="stWidgetLabel"] small {color:var(--blast-muted) !important;}
