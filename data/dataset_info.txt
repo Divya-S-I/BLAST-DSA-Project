@@ -1,0 +1,33 @@
+BLASTN E. coli K-12 MG1655 starter dataset
+================================================
+Organism: Escherichia coli str. K-12 substr. MG1655
+Reference accession: NC_000913.3
+Reference source: NCBI RefSeq
+Reference FASTA: ecoli_k12_mg1655_reference.fasta
+Query FASTA: ecoli_queries.fasta
+
+Reference length after A/C/G/T filtering: 4,641,652 bp
+Number of queries: 5
+Length of each query: 500 bp
+Query regions (1-based inclusive coordinates):
+  query_1: 1,073,738 - 1,074,237
+  query_2: 1,663,345 - 1,663,844
+  query_3: 2,914,372 - 2,914,871
+  query_4: 3,067,632 - 3,068,131
+  query_5: 3,630,530 - 3,631,029
+
+IMPORTANT EXPERIMENTAL NOTE
+---------------------------
+These query sequences are exact 500-bp fragments extracted from the same
+reference genome used as the subject. This gives known positive target
+locations and is suitable for the first pipeline/debugging experiment.
+
+It is NOT sufficient by itself to claim realistic sensitivity across
+divergent homologous sequences: exact self-reference matches are an easy case.
+For the sensitivity study, add independent query sequences from related
+E. coli strains or create a separately labelled mutation challenge set.
+Do not mix those two types of data without documenting them.
+
+Keep the subject reference and query FASTA unchanged for all K comparisons.
+Record BLASTN version, task, word_size, other parameters, runtime, hit
+coordinates, identity, query coverage, and whether the known target was found.
