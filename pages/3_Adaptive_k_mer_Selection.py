@@ -8,7 +8,6 @@ sys.path.insert(0,str(ROOT))
 from theme import init,hero,footer
 init('Adaptive k-mer Selection')
 hero('04','Adaptive k-mer Selection','Choose the largest exact word size that meets a predicted hit-sensitivity target, then study the expected random-hit workload.')
-st.info('This page reproduces the **mathematical DP model and selection rule** from your uploaded `blast_adaptive_k.py`. It does not claim to run the full NCBI BLASTN benchmark. The original benchmark scripts are available below.')
 @st.cache_data(show_spinner=False)
 def hit_probability(k:int,p:float,N:int)->float:
     if k>N:return 0.0
@@ -53,36 +52,9 @@ st.line_chart(df.set_index('k')[['Predicted sensitivity']],color='#087e8b')
 st.line_chart(df.set_index('k')[['Expected random seed hits']],color='#d69b38')
 st.caption('The random-hit formula assumes independent, uniform DNA; actual genomic repeats and base composition change the count. The sensitivity model assumes independent aligned matches and does not model gaps, BLAST filters or E-values.')
 st.dataframe(df.assign(**{'Meets target':df['Predicted sensitivity']>=target}).style.format({'Predicted sensitivity':'{:.2%}','Expected random seed hits':'{:,.3f}'}),hide_index=True,use_container_width=True)
-st.markdown('### 3. Validate the predicted detection probability by simulation')
-with st.expander('Run a reproducible match/mismatch simulation',expanded=False):
-    trials=st.slider('Independent simulated regions',100,5000,1000,100)
-    seed=st.number_input('Random seed',value=42,min_value=0)
-    if st.button('Run simulated detection test',type='primary'):
-        rng=random.Random(int(seed));success=0
-        for _ in range(trials):
-            streak=0
-            for _ in range(N):
-                streak=streak+1 if rng.random()<p else 0
-                if streak>=selected:
-                    success+=1;break
-        observed=success/trials
-        a,b=st.columns(2)
-        a.metric('Observed simulated hit rate',f'{observed:.1%}')
-        b.metric('Predicted k-run probability',f'{selected_row["Predicted sensitivity"]:.1%}')
-        st.caption('These are simulated Bernoulli match/mismatch strings, not observed BLASTN detection sensitivity. Overlapping seed opportunities are handled automatically.')
-st.markdown('### 4. How this relates to your supplied experiment')
-st.markdown('''The uploaded `blast_adaptive_k.py` uses **NCBI BLASTN**, a cheap pilot search to estimate identity, and then selects the largest k predicted to meet a sensitivity target. Its full benchmark compares multiple fixed k values, random k, and adaptive k across planted mutation scenarios. Pilot time is included in the adaptive runtime. The `blastn_wordsize_tradeoff.py` script separately studies speed and true-locus recovery over k values on real and synthetic genomes.
-
-**Critical limitation:** a pilot BLASTN hit estimate may be biased toward easy-to-detect matches; no hit does not prove low similarity. Also, a DP run-probability target is not a guarantee of measured BLASTN sensitivity.''')
-c1,c2=st.columns(2)
-for col,name in [(c1,'blast_adaptive_k.py'),(c2,'blastn_wordsize_tradeoff.py')]:
-    path=ROOT/'research_scripts'/name
-    with col:st.download_button(f'Download {name}',path.read_bytes(),file_name=name,mime='text/x-python',use_container_width=True)
-st.caption('The downloaded scripts need NCBI BLAST+ (`blastn`, `makeblastdb`), network access to retrieve NCBI sequences and additional dependencies. They are not executed by this dashboard.')
-
 # -------------------- Full experimental strategy -----------------------
 st.divider()
-st.markdown('### 5. Actual BLASTN experiment: five-step adaptive strategy')
+st.markdown('### 3. Actual BLASTN experiment: five-step adaptive strategy')
 st.write('This is a **real NCBI BLASTN experiment**, separate from the mathematical simulator above. It builds a nucleotide database, creates queries from known locations in your chosen reference, performs a pilot search, chooses k, and measures recovery and execution time against fixed and random k values.')
 st.caption('Planted query fragments are mutated by substitutions to a known identity. Measured sensitivity means recovering their known reference location, not proving biological homology.')
 from adaptive_blastn_experiment import available as blast_plus_available, fasta_to_reference, run_experiment
